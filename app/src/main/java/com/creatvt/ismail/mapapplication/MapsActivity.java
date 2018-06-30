@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,9 +13,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,6 +25,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.IOException;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -74,9 +81,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onSuccess(Location location) {
                     if(location!=null) {
-                        LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(current).title(location.getExtras().toString()));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+                        try {
+                            Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
+                            Address address = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1).get(0);
+                            LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(current).title(address.getSubLocality()));
+                            CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(current,20);
+                            mMap.animateCamera(zoom);
+                        }catch(IOException ioe){
+                            Log.i(TAG,ioe.getMessage());
+                        }
                     }
                 }
             });
