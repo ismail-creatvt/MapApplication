@@ -1,23 +1,27 @@
 package com.creatvt.ismail.mapapplication;
 
 import android.Manifest;
-import android.app.ActivityOptions;
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -34,7 +38,6 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -51,9 +54,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,View.OnClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,View.OnClickListener,DialogInterface.OnClickListener {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -72,11 +74,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Polyline mPolylineGoogle;
     private Boolean mRequestingLocationUpdates;
     private Boolean isLocationTrackingEnabled = true;
-    private Button btnStart,btnStop;
-
+    private AlertDialog alert;
+    private View alertView;
+    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences =  getSharedPreferences(getString(R.string.shared_preference_key),MODE_PRIVATE);;
         setContentView(R.layout.activity_maps);
         findViewById(R.id.btnStart).setOnClickListener(this);
         findViewById(R.id.btnStop).setOnClickListener(this);
@@ -139,11 +143,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 super.onLocationResult(locationResult);
 
                 mCurrentLocation = locationResult.getLastLocation();
+                final double LATITUDE = mCurrentLocation.getLatitude();
+                final double LONGITUDE = mCurrentLocation.getLongitude();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-
-                Log.i(TAG,"Current Time : " + mLastUpdateTime);
-
-                drawPolylineGoogleMap(mCurrentLocation);
+                try {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    Address address = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1).get(0);
+                    String addr = address.getSubLocality();
+                    DBHelper dbHelper = new DBHelper(MapsActivity.this);
+                    dbHelper.addData(preferences.getString("name","name"),addr,LATITUDE,LONGITUDE);
+                    Log.i(TAG, "Current Time : " + mLastUpdateTime);
+                    drawPolylineGoogleMap(mCurrentLocation);
+                }
+                catch (IOException ioe){
+                    Log.i(TAG,"Exception : " + ioe.getMessage());
+                }
             }
         };
     }
@@ -274,8 +288,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btnStart){
-            isLocationTrackingEnabled = true;
-            startLocationUpdates();
+            if(!preferences.contains("name")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                alertView = LayoutInflater.from(MapsActivity.this).inflate(R.layout.enter_name_alert, null, false);
+                builder.setView(alertView);
+                builder.setPositiveButton("SAVE", MapsActivity.this);
+                builder.setNegativeButton("CANCEL", MapsActivity.this);
+                alert = builder.create();
+                alert.show();
+            }
+            else {
+                isLocationTrackingEnabled = true;
+                startLocationUpdates();
+            }
         }
 
         if(view.getId() == R.id.btnStop){
@@ -283,5 +308,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             stopLocationUpdates();
         }
 
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if(which == Dialog.BUTTON_POSITIVE){
+            // "SAVE" Button is Clicked
+            // Get input name from alert box
+            String name = ((TextView) alertView.findViewById(R.id.name_field)).getText().toString().trim();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("name",name);
+            editor.commit();
+            isLocationTrackingEnabled = true;
+            startLocationUpdates();
+        }
+        else if(which == Dialog.BUTTON_NEGATIVE){
+            // "CANCEL" Button is Clicked
+            dialog.dismiss();
+        }
     }
 }
