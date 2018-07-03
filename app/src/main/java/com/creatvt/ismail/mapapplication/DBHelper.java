@@ -2,8 +2,12 @@ package com.creatvt.ismail.mapapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -16,7 +20,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
     private static final String TIME = "time";
-    private static final String DEFAULT = "DEFAULT";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -46,7 +49,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(ADDRESS,address);
         values.put(LATITUDE,latitude);
         values.put(LONGITUDE,longitude);
-        values.put(TIME,DEFAULT);
 
         long no = db.insert(TABLE_NAME,null,values);
 
@@ -56,6 +58,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public List<Track> getTracks(String name){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE name='" + name + "'";
+        Cursor cursor = db.rawQuery(query,null);
+        List<Track> trackList = new ArrayList<>();
+        cursor.moveToFirst();
+        do{
+            String address = cursor.getString(cursor.getColumnIndex(ADDRESS));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(LATITUDE));
+            double longitude = cursor.getDouble(cursor.getColumnIndex(LONGITUDE));
+            String time = cursor.getString(cursor.getColumnIndex(TIME));
+            trackList.add(new Track(address,latitude,longitude,time));
+        }while (cursor.moveToNext());
+        cursor.close();
+        db.close();
+        return trackList;
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

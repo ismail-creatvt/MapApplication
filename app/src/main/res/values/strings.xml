@@ -3,4 +3,9 @@
     <string name="title_activity_maps">Map</string>
     <string name="enter_your_name">Enter Your Name</string>
     <string name="shared_preference_key">com.creatvt.ismail.MySharedPreference</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="time">Time</string>
 </resources>

@@ -12,88 +12,55 @@
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
 
-
     <android.support.v7.widget.CardView
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="3dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="16dp"
-        app:cardBackgroundColor="@color/colorAccent">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp">
+        android:layout_margin="10dp"
+        app:cardElevation="20dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/trackedBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textAllCaps="true"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/btnGetTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="3dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        app:cardBackgroundColor="@color/colorAccent">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp">
-
-            <TextView
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:layout_marginRight="30dp">
+                <ImageButton
+                    android:id="@+id/get_track"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/get_tracked_details" />
+                <TextView
+                    android:id="@+id/trackedName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ismail Shaikh"
+                    android:paddingLeft="20dp"
+                    android:textSize="20sp"/>
+                <ImageButton
+                    android:id="@+id/edit_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/edit_icon"
+                    />
+            </LinearLayout>
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swhStartStop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Get Track"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textAllCaps="true"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/btnStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardElevation="6dp"
-        app:cardCornerRadius="3dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        app:cardBackgroundColor="@color/colorAccent">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stop"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
-                android:textAllCaps="true"/>
-        </LinearLayout>
+                android:textSize="30dp"
+                android:textOn="Start"
+                android:textOff="Stop"
+                android:checked="true"
+                android:layout_marginRight="15dp"
+                android:layout_toRightOf="@id/trackedBar"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>
