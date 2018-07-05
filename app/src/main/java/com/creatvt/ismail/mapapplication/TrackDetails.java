@@ -14,7 +14,6 @@ public class TrackDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_details);
-
         Intent data = getIntent();
         String name = data.getStringExtra("name");
         DBHelper dbHelper = new DBHelper(this);

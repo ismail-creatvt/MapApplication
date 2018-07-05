@@ -352,6 +352,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 editor.putString("name",txtName.getText().toString().trim());
                 editor.putBoolean("isLocationTrackingEnabled",isLocationTrackingEnabled);
                 editor.commit();
+                trackedName.setText(txtName.getText().toString().trim());
                 trackedBar.setVisibility(View.VISIBLE);
             }
         }

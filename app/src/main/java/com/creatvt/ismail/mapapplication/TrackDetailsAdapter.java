@@ -28,9 +28,9 @@ public class TrackDetailsAdapter extends RecyclerView.Adapter<TrackViewHolder> {
     public void onBindViewHolder(TrackViewHolder holder, int position) {
         Track track = trackList.get(position);
         holder.txtAddress.setText(track.getAddress());
+        holder.txtLatitude.setText(track.getLatitude()+"");
+        holder.txtLongitude.setText(track.getLongitude()+"");
         holder.txtTime.setText(track.getTime());
-        holder.txtLatitude.setText(Double.toString(track.getLatitude()));
-        holder.txtLongitude.setText(Double.toString(track.getLongitude()));
     }
 
     @Override
