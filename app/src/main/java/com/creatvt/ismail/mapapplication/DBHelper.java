@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,22 +59,30 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public List<Track> getTracks(String name){
+    public List<List<Cell>> getTracks(String name){
         SQLiteDatabase db = getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME + " WHERE name='" + name + "'";
         Cursor cursor = db.rawQuery(query,null);
-        List<Track> trackList = new ArrayList<>();
+        if(cursor.getCount() == 0){
+            return null;
+        }
+        List<List<Cell>> cellList = new ArrayList<>();
         cursor.moveToFirst();
         do{
+            List<Cell> row = new ArrayList<>();
             String address = cursor.getString(cursor.getColumnIndex(ADDRESS));
             double latitude = cursor.getDouble(cursor.getColumnIndex(LATITUDE));
             double longitude = cursor.getDouble(cursor.getColumnIndex(LONGITUDE));
             String time = cursor.getString(cursor.getColumnIndex(TIME));
-            trackList.add(new Track(address,latitude,longitude,time));
+            row.add(new Cell(time));
+            row.add(new Cell(address));
+            row.add(new Cell(latitude+""));
+            row.add(new Cell(longitude+""));
+            cellList.add(row);
         }while (cursor.moveToNext());
         cursor.close();
         db.close();
-        return trackList;
+        return cellList;
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
