@@ -2,4 +2,5 @@
 <resources>
     <dimen name="table_text_size">18sp</dimen>
     <dimen name="table_padding">15dp</dimen>
+    <dimen name="polyline_width">5dp</dimen>
 </resources>
